@@ -22,6 +22,7 @@ public class JavaFX_Calculator_FinalProject extends Application {
     private static ArrayList<String> inputNum = new ArrayList<String>();
     private static ArrayList<String> operands = new ArrayList<String>();
     private static Boolean clicked=false,computed = false;
+    
 
     public static void main(String[] args) {
         launch(args);
@@ -260,7 +261,7 @@ public class JavaFX_Calculator_FinalProject extends Application {
         input.setText("");
         displayText.setText("");
         
-        setInput(kb.getCharacter());
+
         
         
     }
