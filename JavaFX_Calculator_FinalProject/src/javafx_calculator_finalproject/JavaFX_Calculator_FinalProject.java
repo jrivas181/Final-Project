@@ -17,7 +17,7 @@ import javafx.stage.Stage;
 
 
 public class JavaFX_Calculator_FinalProject extends Application {
-    private static Text input = new Text();
+    private static Text input = new Text("");
     private static Text displayText = new Text();
     private static ArrayList<String> inputNum = new ArrayList<String>();
     private static ArrayList<String> operands = new ArrayList<String>();
@@ -256,12 +256,14 @@ public class JavaFX_Calculator_FinalProject extends Application {
     }
     
     public static void clearAll(){
-        inputNum=new ArrayList<String>();
-        operands= new ArrayList<String>();
-        input.setText("");
-        displayText.setText("");
+        String temp = input.getText();
         
-
+        inputNum.removeAll(inputNum);
+        operands.removeAll(operands);
+        input.setText("");
+        displayText.setText(temp);
+        
+        
         
         
     }
@@ -269,8 +271,10 @@ public class JavaFX_Calculator_FinalProject extends Application {
     static class keyPressed implements EventHandler<KeyEvent>{
         @Override
         public void handle(KeyEvent kb){
-            //if(computed])
-              //  checkComputedInput();
+    
+            if(!input.getText().equals("") && MathOperations.result.toString().equals(input.getText()) && !input.getText().equals("0"))
+              
+                clearAll();
                 
             if (kb.getCharacter().equals("0"))
                setInput(getInput().getText()+ "0");
