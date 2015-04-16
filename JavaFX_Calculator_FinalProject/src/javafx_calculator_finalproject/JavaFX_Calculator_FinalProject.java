@@ -125,10 +125,7 @@ public class JavaFX_Calculator_FinalProject extends Application {
         equals.setOnKeyTyped(new keyPressed());
         equals.setOnMouseClicked(e -> {
                 inputNum.add(input.getText());
-                if(clicked)
-                    MathOperationsDecimal.computeBigDecimal(inputNum,operands);
-                else
-                    MathOperations.compute(inputNum,operands);
+                MathOperations.compute(inputNum,operands);
         });
         equals.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
         

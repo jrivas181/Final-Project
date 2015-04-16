@@ -1,14 +1,13 @@
 package javafx_calculator_finalproject;
 
-import java.math.BigInteger;
 import java.util.ArrayList;
 
 
 
 public class MathOperations {
+    static double result = 0;
     
-    
-    public static void computeBigInteger(ArrayList<String> inputNum, ArrayList<String> operands){
+    public static void compute(ArrayList<String> inputNum, ArrayList<String> operands){
 
         
         
@@ -17,9 +16,7 @@ public class MathOperations {
         checkOperands(inputNum, operands, "/");
         checkOperands(inputNum, operands,"+");
         checkOperands(inputNum, operands, "-");
-        
-        
-    
+            
     }
    
    
@@ -56,93 +53,99 @@ public class MathOperations {
                 i++;   
                }    
             
-            JavaFX_Calculator_FinalProject.setInput(inputNum.get(0).toString());
+            JavaFX_Calculator_FinalProject.setInput(inputNum.get(0));
             JavaFX_Calculator_FinalProject.setDisplayText("");
             
             
     }
             
     public static void computeE(ArrayList<String> inputNum,ArrayList<String> operands, int i){
-            BigInteger num1 = new BigInteger(inputNum.get(i));
-            int num2 = Integer.parseInt(inputNum.get(i+1));
+            double num1 = Double.valueOf(inputNum.get(i));
+            double num2 = Double.valueOf(inputNum.get(i+1));
             
-            BigInteger result = num1.pow(num2);
+            result=num1;
             
-            inputNum.set(i, result.toString());
+          
+            result = Math.pow(num1, num2);
+            
+            if(Double.toString(result).endsWith(".0"))
+                inputNum.set(i,Integer.toString((int) result));
+            else
+                inputNum.set(i, Double.toString(result));
+            
             inputNum.remove(i+1);
             operands.remove(i);
             
-            JavaFX_Calculator_FinalProject.setInputNum(i, result.toString());
-            JavaFX_Calculator_FinalProject.setInputNum(i+1);
-            JavaFX_Calculator_FinalProject.setOperands(i);
+
             
     }
     
     public static void computeM(ArrayList<String> inputNum,ArrayList<String> operands, int i){
-            BigInteger num1 = new BigInteger(inputNum.get(i));
-            BigInteger num2 = new BigInteger(inputNum.get(i+1));
+            double num1 = Double.valueOf(inputNum.get(i));
+            double num2 = Double.valueOf(inputNum.get(i+1));
             
-            BigInteger result = num1.multiply(num2);
+             result =num1*num2;
+             
+            if(Double.toString(result).endsWith(".0"))
+                inputNum.set(i,Integer.toString((int) result));
+            else
+                inputNum.set(i, Double.toString(result));
             
-            inputNum.set(i, result.toString());
             inputNum.remove(i+1);
             operands.remove(i);
             
-            JavaFX_Calculator_FinalProject.setInputNum(i, result.toString());
-            JavaFX_Calculator_FinalProject.setInputNum(i+1);
-            JavaFX_Calculator_FinalProject.setOperands(i);
             
     }
     
     public static void computeD(ArrayList<String> inputNum,ArrayList<String> operands, int i){
-            BigInteger num1 = new BigInteger(inputNum.get(i));
-            BigInteger num2 = new BigInteger(inputNum.get(i+1));   
+            double num1 = Double.valueOf(inputNum.get(i));
+            double num2 = Double.valueOf(inputNum.get(i+1));   
             
-            BigInteger result = num1.divide(num2);
+            result = num1/num2;
             
-            inputNum.set(i, result.toString());
+            if(Double.toString(result).endsWith(".0"))
+                inputNum.set(i,Integer.toString((int) result));
+            else
+            inputNum.set(i, Double.toString(result));
+            
             inputNum.remove(i+1);
             operands.remove(i);
-            
-            JavaFX_Calculator_FinalProject.setInputNum(i, result.toString());
-            JavaFX_Calculator_FinalProject.setInputNum(i+1);
-            JavaFX_Calculator_FinalProject.setOperands(i);
+
             
     }
     
     public static void computeA(ArrayList<String> inputNum,ArrayList<String> operands, int i){
-            System.out.print(inputNum.get(i));
-            System.out.print(inputNum.get(i+1));
-            BigInteger num1 = new BigInteger(inputNum.get(i).toString());
             
-            BigInteger num2 = new BigInteger(inputNum.get(i+1));   
+            double num1 = Double.valueOf(inputNum.get(i).toString());
+            double num2 = Double.valueOf(inputNum.get(i+1));   
             
-            BigInteger result = num1.add(num2);
-            System.out.println(inputNum);
-            inputNum.set(i, result.toString());
+            result = num1+num2;
+            
+            if(Double.toString(result).endsWith(".0"))
+                inputNum.set(i,Integer.toString((int) result));
+            else
+            inputNum.set(i, Double.toString(result));
+            
             inputNum.remove(i+1);
             operands.remove(i);
-            System.out.println(inputNum);
-           // System.out.println(JavaFX_Calculator_FinalProject.getInputNum());
-            JavaFX_Calculator_FinalProject.setInputNum(i, result.toString());
-            JavaFX_Calculator_FinalProject.setInputNum(i+1);
             
-           // System.out.println(JavaFX_Calculator_FinalProject.getInputNum());
-            //JavaFX_Calculator_FinalProject.setOperands(i);
+            
+
     }
     
     public static void computeS(ArrayList<String> inputNum,ArrayList<String> operands, int i){
-             BigInteger num1 = new BigInteger(inputNum.get(i));
-            BigInteger num2 = new BigInteger(inputNum.get(i+1));   
+            double num1 = Double.valueOf(inputNum.get(i));
+            double num2 = Double.valueOf(inputNum.get(i+1));   
             
-            BigInteger result = num1.subtract(num2);
+           result = num1-num2;
+
+            if(Double.toString(result).endsWith(".0"))
+                inputNum.set(i,Integer.toString((int) result));
+            else           
+            inputNum.set(i, Double.toString(result));
             
-            inputNum.set(i, result.toString());
             inputNum.remove(i+1);
             operands.remove(i);
-            
-            JavaFX_Calculator_FinalProject.setInputNum(i, result.toString());
-            JavaFX_Calculator_FinalProject.setInputNum(i+1);
-            JavaFX_Calculator_FinalProject.setOperands(i);
+
     }
 }
