@@ -21,13 +21,13 @@ public class JavaFX_Calculator_FinalProject extends Application {
     private static Text displayText = new Text();
     private static ArrayList<String> inputNum = new ArrayList<String>();
     private static ArrayList<String> operands = new ArrayList<String>();
-    private static Boolean clicked=false,computed = false;
+    private static Boolean clicked=false;
     
 
     public static void main(String[] args) {
         launch(args);
     }
-    
+     
     public static Text getInput() {
         return input;
     }
@@ -117,12 +117,19 @@ public class JavaFX_Calculator_FinalProject extends Application {
         
         Button dot = new Button(".");
         dot.setOnMouseClicked(new dotClicked());
-        dot.setOnKeyTyped(new dotPressed());
+        dot.setOnKeyTyped(new keyPressed());
         
         dot.setMaxSize(Double.MAX_VALUE,Double.MAX_VALUE);
 
         Button equals = new Button("=");
         equals.setOnKeyTyped(new keyPressed());
+        equals.setOnMouseClicked(e -> {
+                inputNum.add(input.getText());
+                if(clicked)
+                    MathOperationsDecimal.computeBigDecimal(inputNum,operands);
+                else
+                    MathOperations.compute(inputNum,operands);
+        });
         equals.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
         
         Button add=new Button(" +");
@@ -148,9 +155,9 @@ public class JavaFX_Calculator_FinalProject extends Application {
         numberPad.add(dot,2,3);
         numberPad.add(equals, 4,2);
         
-        numberPad.setColumnSpan(equals,2);
-        numberPad.setRowSpan(equals,2);
-        numberPad.setColumnSpan(zero,2);
+        GridPane.setColumnSpan(equals,2);
+        GridPane.setRowSpan(equals,2);
+        GridPane.setColumnSpan(zero,2);
 
        
         return numberPad;
@@ -164,22 +171,27 @@ public class JavaFX_Calculator_FinalProject extends Application {
         
         Button sqrt = new Button("√x");
         sqrt.setOnKeyTyped(new keyPressed());
+        sqrt.setOnMouseClicked(new operationClicked());
         sqrt.setMaxSize(Double.MAX_VALUE,Double.MAX_VALUE);
 
         Button log_2 = new Button("Log2");
         log_2.setOnKeyTyped(new keyPressed());
+        log_2.setOnMouseClicked(new operationClicked());
         log_2.setMaxSize(Double.MAX_VALUE,Double.MAX_VALUE);
         
         Button log_10 = new Button("Log10");
         log_10.setOnKeyTyped(new keyPressed());
+        log_10.setOnMouseClicked(new operationClicked());
         log_10.setMaxSize(Double.MAX_VALUE,Double.MAX_VALUE);
         
         Button x_y = new Button("x^y");
         x_y.setOnKeyTyped(new keyPressed());
+        x_y.setOnMouseClicked(new operationClicked());
         x_y.setMaxSize(Double.MAX_VALUE,Double.MAX_VALUE);
         
         Button sin = new Button("Sine");
         sin.setOnKeyTyped(new keyPressed());
+        sin.setOnMouseClicked(new operationClicked());
         sin.setMaxSize(Double.MAX_VALUE,Double.MAX_VALUE);
         
         Button clearAll = new Button("Clear");
@@ -193,6 +205,8 @@ public class JavaFX_Calculator_FinalProject extends Application {
         clearLast.setMaxSize(Double.MAX_VALUE,Double.MAX_VALUE);
         
         Button cos = new Button("Cosine");
+        cos.setOnMouseClicked(new operationClicked());
+        cos.setOnKeyTyped(new keyPressed());
         
         equations.addColumn(0, log_2,log_10,sin,cos);
         equations.addColumn(1,clearAll,clearLast,sqrt,x_y);
@@ -202,20 +216,47 @@ public class JavaFX_Calculator_FinalProject extends Application {
     }
     
     public static void add(){
-        inputNum.add(input.getText());
-        operands.add("+");
+        if(!inputNum.isEmpty() && operands.isEmpty()){
+            
+            operands.add("+");
                 
-        if(displayText.getText() ==""){
+             if(displayText.getText() == ""){
              displayText.setText(input.getText()+" + ");
             }
-        else{
+            else{
              displayText.setText(displayText.getText()+ input.getText()+" + ");
                     }
-         setInput("");
+            setInput("");
+        }
+        else{
+            inputNum.add(input.getText());
+            operands.add("+");
+                
+            if(displayText.getText() == ""){
+                 displayText.setText(input.getText()+" + ");
+            }
+            else{
+                displayText.setText(displayText.getText()+ input.getText()+" + ");
+                    }
+            setInput("");
         
+    }
+        clicked = false;
     }
     
     public static void subtract(){
+        if(!inputNum.isEmpty()&& operands.isEmpty()){
+            operands.add("-");
+            
+            if(displayText.getText() ==""){
+                    displayText.setText(input.getText()+" - ");
+            }
+            else{
+                  displayText.setText(displayText.getText()+ input.getText()+" - ");
+                    }
+             setInput("");
+        }
+        else{
             inputNum.add(input.getText());
             operands.add("-");
             
@@ -228,8 +269,22 @@ public class JavaFX_Calculator_FinalProject extends Application {
              setInput("");
     
     }
+        clicked = false;
+    }
     
     public static void multiply(){
+        if(!inputNum.isEmpty()&& operands.isEmpty()){
+            operands.add("*");
+                
+            if(displayText.getText() ==""){
+                    displayText.setText(input.getText()+" * ");
+            }
+            else{
+                  displayText.setText(displayText.getText()+ input.getText()+" * ");
+                    }
+             setInput("");
+        }
+        else{
             inputNum.add(input.getText());
             operands.add("*");
                 
@@ -241,28 +296,72 @@ public class JavaFX_Calculator_FinalProject extends Application {
                     }
              setInput("");
     }
+        clicked = false;
+    }
     
     public static void divide(){
-        inputNum.add(input.getText());
-        operands.add("/");
+        if(!inputNum.isEmpty() && operands.isEmpty()){
+            operands.add("/");
         
-        if(displayText.getText() ==""){
+             if(displayText.getText() ==""){
                 displayText.setText(input.getText()+" / ");
             }
+            else{
+                  displayText.setText(displayText.getText()+ input.getText()+" / ");
+                    }
+        setInput("");
+        }
         else{
+            inputNum.add(input.getText());
+            operands.add("/");
+        
+            if(displayText.getText() ==""){
+                displayText.setText(input.getText()+" / ");
+            }
+            else{
                   displayText.setText(displayText.getText()+ input.getText()+" / ");
                     }
         setInput("");
     }
+        clicked = false;
+    }
+    
+    public static void powerOf(){
+        if(!inputNum.isEmpty() && operands.isEmpty()){
+            operands.add("^");
+        
+             if(displayText.getText() ==""){
+                displayText.setText(input.getText()+" ^ ");
+            }
+            else{
+                  displayText.setText(displayText.getText()+ input.getText()+" ^ ");
+                    }
+        setInput("");
+        }
+        else{
+            inputNum.add(input.getText());
+            operands.add("^");
+        
+            if(displayText.getText() ==""){
+                displayText.setText(input.getText()+" ^ ");
+            }
+            else{
+                  displayText.setText(displayText.getText()+ input.getText()+" ^ ");
+                    }
+        setInput("");
+    }
+        clicked = false;
+    
+    }
     
     public static void clearAll(){
         String temp = input.getText();
+       
+        inputNum.clear();
+        operands.clear();
         
-        inputNum.removeAll(inputNum);
-        operands.removeAll(operands);
         input.setText("");
         displayText.setText(temp);
-        
         
         
         
@@ -272,9 +371,6 @@ public class JavaFX_Calculator_FinalProject extends Application {
         @Override
         public void handle(KeyEvent kb){
     
-            if(!input.getText().equals("") && MathOperations.result.toString().equals(input.getText()) && !input.getText().equals("0"))
-              
-                clearAll();
                 
             if (kb.getCharacter().equals("0"))
                setInput(getInput().getText()+ "0");
@@ -314,13 +410,14 @@ public class JavaFX_Calculator_FinalProject extends Application {
             }
             else if(kb.getCharacter().equals("\r")){
                 inputNum.add(input.getText());
-                if(clicked)
-                    MathOperationsDecimal.computeBigDecimal(inputNum,operands);
-                else
-                    MathOperations.computeBigInteger(inputNum,operands);
+                MathOperations.compute(inputNum,operands);
+            
             }
-            else if(input.getText().equals(inputNum.get(0)))
-                clearAll();
+            else if(kb.getCharacter().equals("."))
+                 if(clicked == false){
+                    getInput().setText(getInput().getText()+".");
+                    clicked=true;
+                 }
     
     }
 
@@ -337,40 +434,49 @@ public class JavaFX_Calculator_FinalProject extends Application {
                 }
         }
     }
-    static class dotPressed implements EventHandler<KeyEvent>{
-        
-        @Override
-        public void handle(KeyEvent kb){
-                if(clicked == false){
-                    if(kb.getCharacter().equals(".")){
-                    getInput().setText(getInput().getText()+".");
-                    clicked=true;
-                }}
-        }
-    }
+
     
     static class operationClicked implements EventHandler<MouseEvent>{
    
         @Override
         public void handle(MouseEvent e){
-           
-            String temp="";
-            for(int i=e.getSource().toString().length()-5; i <e.getSource().toString().length();i++)
-                temp += e.getSource().toString().charAt(i);
             
-             if(temp.equals("]' +'")){
+            String temp=e.getSource().toString();
+            System.out.println(temp);
+             if(temp.contains("' +'"))
                  add();
-                }
-             else if(temp.equals("' / '")){
+                
+             else if (temp.contains("' / '"))
                  divide();
-        }
-             else if(temp.equals("' - '")){
-                 subtract();
-             }
-             else if(temp.equals("' * '")){
-                 multiply();
-    }
         
+             else if(temp.contains("' - '"))
+                 subtract();
+             
+             else if(temp.contains("' * '"))
+                 multiply();
+             
+             else if(temp.contains("'x^y'"))
+                 powerOf();
+                     
+             
+ /*********THESE NEED TO ALL BE MADE IN THE MATH OPERATIONS CLASS**************/
+             else if(temp.contains("'Log2'")){
+             
+             }
+             else if(temp.contains("'Log10'")){
+             
+             }
+             else if(temp.contains("'Sine'")){
+             
+             }
+             else if(temp.contains("'Cosine'")){
+                 
+             }
+
+             else if(temp.contains("'√x'")){
+                 
+             }
+/******************************************************************************/
 
         }
         
