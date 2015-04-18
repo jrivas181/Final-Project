@@ -109,8 +109,8 @@ public class JavaFX_Calculator_FinalProject extends Application {
         int i = 1;
         
         //add numbers to pad and generate event handlers
-        for(int r = 3; r > 0; r--)
-            for(int c = 0; c < 3; c++){
+        for(int r = 2; r >= 0; r--)
+            for(int c = 0; c <= 2; c++){
                String temp = numSym[0][i];
                i++;
                num = new Button(temp);
