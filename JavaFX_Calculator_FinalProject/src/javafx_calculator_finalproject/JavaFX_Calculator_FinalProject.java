@@ -21,9 +21,16 @@ public class JavaFX_Calculator_FinalProject extends Application {
     private static Text displayText = new Text();
     private static ArrayList<String> inputNum = new ArrayList<String>();
     private static ArrayList<String> operands = new ArrayList<String>();
-    private static Boolean clicked=false;
+    private static Boolean clicked = false;
     
-
+    //2d array set of valid characters / functions
+    //we can use these to build the buttons ... for/each, add string
+    //it is a full list of the calculator button functionality
+    private static String[][] numSym = { ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"] /*numeric*/
+                                         [".", "+", "-", "*", "/", ] /*basic functions*/
+                                         ["x^y", "âˆšx", "Log2", "Log10", "Sin", "Cos", "Clear", "->" ]; /*special functions*/
+                                       } 
+                                       
     public static void main(String[] args) {
         launch(args);
     }
@@ -48,14 +55,13 @@ public class JavaFX_Calculator_FinalProject extends Application {
         return inputNum;
     }
 
-
     public static void setInputNum(int i, String n) {
         inputNum.add(i, n);
     }
+    
     public static void setInputNum(int i) {
         inputNum.remove(i);
     }
-
 
     public static void setOperands(int i) {
         operands.remove(i);
@@ -63,18 +69,13 @@ public class JavaFX_Calculator_FinalProject extends Application {
     
     @Override
     public void start(Stage primaryStage) {
-
         GridPane numPad = createNumberPad();
         GridPane equations = createEquationsPad();
-        
-   
-     
         
         HBox pad = new HBox(5);
         pad.getChildren().add(0, equations);
         pad.getChildren().add(1, numPad);
-        pad.setAlignment(Pos.CENTER);
-        
+        pad.setAlignment(Pos.CENTER);        
         
         VBox display = new VBox(displayText, getInput(),pad);
 
@@ -86,34 +87,39 @@ public class JavaFX_Calculator_FinalProject extends Application {
         primaryStage.setScene(scene);
         primaryStage.show();
     }
-
     
     public static GridPane createNumberPad(){
         GridPane numberPad = new GridPane();
         numberPad.setHgap(5);
         numberPad.setVgap(5);
         Button num;
-        int i=1;
-        for(int r = 2; r>=0;r--)
-            for(int c =0; c<=2; c++){
-            
-                char temp = Integer.toString(i).charAt(0);
+        int i = 1;
+        
+        //add numbers to pad and generate event handlers
+        for(int r = 3; r > 0;r--)
+            for(int c = 0; c < 3; c++){
+               String temp = numSym[0][i];
+               i++;
+               num = new Button(temp);
+               num.setOnMouseClicked(e->getInput().setText(getInput().getText() + temp));
+               num.setOnKeyTyped(new keyPressed());
                 
+               numberPad.add(num, c, r);    
+               /*
+                char temp = Integer.toString(i).charAt(0);                
                 
                 num = new Button(Integer.toString(i));
                 num.setOnMouseClicked(e->getInput().setText(getInput().getText()+ temp));
                 num.setOnKeyTyped(new keyPressed());
                 
-                numberPad.add(num,c,r);
-
-                i++;
-            }
+                numberPad.add(num,c,r);                
+               */
+            }        
         
-        
-        Button zero = new Button("0");
-        zero.setOnMouseClicked(e->getInput().setText(getInput().getText()+"0"));
+        Button zero = new Button(numSym[0][0]);
+        zero.setOnMouseClicked(e -> getInput().setText(getInput().getText() + numSym[0][0]));
         zero.setOnKeyTyped(new keyPressed());
-        zero.setMaxSize(Double.MAX_VALUE,Double.MAX_VALUE);
+        zero.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
         
         Button dot = new Button(".");
         dot.setOnMouseClicked(new dotClicked());
@@ -124,41 +130,38 @@ public class JavaFX_Calculator_FinalProject extends Application {
         Button equals = new Button("=");
         equals.setOnKeyTyped(new keyPressed());
         equals.setOnMouseClicked(e -> {
-                inputNum.add(input.getText());
-                MathOperations.compute(inputNum,operands);
-        });
+           inputNum.add(input.getText());
+           MathOperations.compute(inputNum,operands);
+        }); 
         equals.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
         
-        Button add=new Button(" +");
+        Button add = new Button("+");
         add.setOnMouseClicked(new operationClicked());
         add.setOnKeyTyped(new keyPressed());
         
-        Button divide = new Button(" / ");
+        Button divide = new Button("/");
         divide.setOnMouseClicked(new operationClicked());
         divide.setOnKeyTyped(new keyPressed());
         
-        Button subtract = new Button(" - ");
+        Button subtract = new Button("-");
         subtract.setOnMouseClicked(new operationClicked());
         subtract.setOnKeyTyped(new keyPressed());
         
-        Button multiply = new Button(" * ");
+        Button multiply = new Button("*");
         multiply.setOnMouseClicked(new operationClicked());
-        multiply.setOnKeyTyped(new keyPressed());
+        multiply.setOnKeyTyped(new keyPressed());        
         
+        numberPad.addColumn(4, divide, multiply);
+        numberPad.addColumn(5, subtract, add);
+        numberPad.add(zero, 0, 3);
+        numberPad.add(dot, 2, 3);
+        numberPad.add(equals, 4, 2);
         
-        numberPad.addColumn(4, divide,multiply);
-        numberPad.addColumn(5, subtract,add);
-        numberPad.add(zero,0,3);
-        numberPad.add(dot,2,3);
-        numberPad.add(equals, 4,2);
-        
-        GridPane.setColumnSpan(equals,2);
-        GridPane.setRowSpan(equals,2);
-        GridPane.setColumnSpan(zero,2);
-
+        GridPane.setColumnSpan(equals, 2);
+        GridPane.setRowSpan(equals, 2);
+        GridPane.setColumnSpan(zero, 2);
        
-        return numberPad;
-        
+        return numberPad;        
     }
     
     public static GridPane createEquationsPad(){
@@ -166,7 +169,7 @@ public class JavaFX_Calculator_FinalProject extends Application {
         equations.setHgap(5);
         equations.setVgap(5);
         
-        Button sqrt = new Button("√x");
+        Button sqrt = new Button("âˆšx");
         sqrt.setOnKeyTyped(new keyPressed());
         sqrt.setOnMouseClicked(new operationClicked());
         sqrt.setMaxSize(Double.MAX_VALUE,Double.MAX_VALUE);
@@ -186,7 +189,7 @@ public class JavaFX_Calculator_FinalProject extends Application {
         x_y.setOnMouseClicked(new operationClicked());
         x_y.setMaxSize(Double.MAX_VALUE,Double.MAX_VALUE);
         
-        Button sin = new Button("Sine");
+        Button sin = new Button("Sin");
         sin.setOnKeyTyped(new keyPressed());
         sin.setOnMouseClicked(new operationClicked());
         sin.setMaxSize(Double.MAX_VALUE,Double.MAX_VALUE);
@@ -201,7 +204,7 @@ public class JavaFX_Calculator_FinalProject extends Application {
         clearLast.setOnKeyTyped(new keyPressed());
         clearLast.setMaxSize(Double.MAX_VALUE,Double.MAX_VALUE);
         
-        Button cos = new Button("Cosine");
+        Button cos = new Button("Cos");
         cos.setOnMouseClicked(new operationClicked());
         cos.setOnKeyTyped(new keyPressed());
         
@@ -235,9 +238,8 @@ public class JavaFX_Calculator_FinalProject extends Application {
             else{
                 displayText.setText(displayText.getText()+ input.getText()+" + ");
                     }
-            setInput("");
-        
-    }
+            setInput("");        
+        }
         clicked = false;
     }
     
@@ -250,8 +252,8 @@ public class JavaFX_Calculator_FinalProject extends Application {
             }
             else{
                   displayText.setText(displayText.getText()+ input.getText()+" - ");
-                    }
-             setInput("");
+            }
+            setInput("");
         }
         else{
             inputNum.add(input.getText());
@@ -265,7 +267,7 @@ public class JavaFX_Calculator_FinalProject extends Application {
                     }
              setInput("");
     
-    }
+        }
         clicked = false;
     }
     
@@ -292,7 +294,7 @@ public class JavaFX_Calculator_FinalProject extends Application {
                   displayText.setText(displayText.getText()+ input.getText()+" * ");
                     }
              setInput("");
-    }
+        }
         clicked = false;
     }
     
@@ -300,13 +302,15 @@ public class JavaFX_Calculator_FinalProject extends Application {
         if(!inputNum.isEmpty() && operands.isEmpty()){
             operands.add("/");
         
-             if(displayText.getText() ==""){
+            if(displayText.getText() ==""){
                 displayText.setText(input.getText()+" / ");
             }
             else{
                   displayText.setText(displayText.getText()+ input.getText()+" / ");
-                    }
+            }
+            
         setInput("");
+        
         }
         else{
             inputNum.add(input.getText());
@@ -317,9 +321,12 @@ public class JavaFX_Calculator_FinalProject extends Application {
             }
             else{
                   displayText.setText(displayText.getText()+ input.getText()+" / ");
-                    }
+            }
+            
         setInput("");
-    }
+        
+        }
+        
         clicked = false;
     }
     
@@ -327,7 +334,7 @@ public class JavaFX_Calculator_FinalProject extends Application {
         if(!inputNum.isEmpty() && operands.isEmpty()){
             operands.add("^");
         
-             if(displayText.getText() ==""){
+            if(displayText.getText() ==""){
                 displayText.setText(input.getText()+" ^ ");
             }
             else{
@@ -347,8 +354,7 @@ public class JavaFX_Calculator_FinalProject extends Application {
                     }
         setInput("");
     }
-        clicked = false;
-    
+        clicked = false;    
     }
     
     public static void clearAll(){
@@ -358,50 +364,54 @@ public class JavaFX_Calculator_FinalProject extends Application {
         operands.clear();
         
         input.setText("");
-        displayText.setText(temp);
-        
-        
-        
+        displayText.setText(temp);                
     }
    
     static class keyPressed implements EventHandler<KeyEvent>{
         @Override
         public void handle(KeyEvent kb){
-    
-                
-            if (kb.getCharacter().equals("0"))
-               setInput(getInput().getText()+ "0");
-            else if(kb.getCharacter().equals("1"))
-               setInput(getInput().getText()+ "1");
+           /*try this instead, I will test it at home. 
+             you can replace the whole if/else with this single line of code
+             
+             setInput.getInput().getText() + kb.getCharacter();
+             
+             if you want to do a numeric or symbolic validation, that can be a different method
+             i'm going to make an array of valid characters. we will look for those.
+             Anything else not on that list can be ignored.
+           */
+           if (kb.getCharacter().equals("0"))
+               setInput(getInput().getText() + "0");
+           else if(kb.getCharacter().equals("1"))
+               setInput(getInput().getText() + "1");
            else if(kb.getCharacter().equals("2"))
-               setInput(getInput().getText()+ "2");
+               setInput(getInput().getText() + "2");
            else if(kb.getCharacter().equals("3"))
-               setInput(getInput().getText()+ "3");
+               setInput(getInput().getText() + "3");
            else if(kb.getCharacter().equals("4"))
-               setInput(getInput().getText()+ "4");
+               setInput(getInput().getText() + "4");
            else if(kb.getCharacter().equals("5"))
-               setInput(getInput().getText()+ "5");
+               setInput(getInput().getText() + "5");
            else if(kb.getCharacter().equals("6"))
-               setInput(getInput().getText()+ "6");
+               setInput(getInput().getText() + "6");
            else if(kb.getCharacter().equals("7"))
-               setInput(getInput().getText()+ "7");
+               setInput(getInput().getText() + "7");
            else if(kb.getCharacter().equals("8"))
-               setInput(getInput().getText()+ "8");
+               setInput(getInput().getText() + "8");
            else if(kb.getCharacter().equals("9"))
-              setInput(getInput().getText()+"9");
+              setInput(getInput().getText() +"9");
            else if(kb.getCharacter().equals("c"))
                clearAll();
-            else if(kb.getCharacter().equals("\b"))
+           else if(kb.getCharacter().equals("\b"))
                setInput(input.getText().substring(0,input.getText().length()-1));
-            else if(kb.getCharacter().equals("+")){
-                add();
-            }
-            else if(kb.getCharacter().equals("-")){
+           else if(kb.getCharacter().equals("+")){
+               add();
+           }
+           else if(kb.getCharacter().equals("-")){
                subtract();
-            }
-            else if(kb.getCharacter().equals("*")){
-                multiply();
-            }
+           }
+           else if(kb.getCharacter().equals("*")){
+               multiply();
+           }
             else if(kb.getCharacter().equals("/")){
                 divide();
             }
@@ -414,10 +424,8 @@ public class JavaFX_Calculator_FinalProject extends Application {
                  if(clicked == false){
                     getInput().setText(getInput().getText()+".");
                     clicked=true;
-                 }
-    
-    }
-
+            }    
+        }
     }
      
 
@@ -470,7 +478,7 @@ public class JavaFX_Calculator_FinalProject extends Application {
                  
              }
 
-             else if(temp.contains("'√x'")){
+             else if(temp.contains("'âˆšx'")){
                  
              }
 /******************************************************************************/
@@ -481,6 +489,3 @@ public class JavaFX_Calculator_FinalProject extends Application {
     }
     
     }
-    
-
-
