@@ -15,7 +15,6 @@ import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
-
 public class JavaFX_Calculator_FinalProject extends Application {
     private static Text input = new Text("");
     private static Text displayText = new Text();
@@ -24,23 +23,22 @@ public class JavaFX_Calculator_FinalProject extends Application {
     private static Boolean clicked = false;
     
     /*2d array set of valid characters / functions
-      we can use these to build the buttons ... for/each, add string
+      we can use these to build the buttons ... for/each, getOperationForInput string
       although looping becomes far less useful for the individual naming/event handling of non-numeric buttons
       it is a full list of the calculator button functionality
     */
-    private static String[][] numSym = { ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"] /*numeric*/
-                                         [".", "=", "+", "-", "*", "/", ] /*basic functions*/
-                                         ["x^y", "âˆšx", "Log2", "Log10", "Sin", "Cos", "Clear", "->" ]; /*special functions*/
-                                       }
-    
-    //UNTESTED                   
+    private static final String[][] numSym = {
+        {"0", "1", "2", "3", "4", "5", "6", "7", "8", "9"},
+        {".", "=", "+", "-", "*", "/" },
+        {"x^y", "âˆšx", "Log2", "Log10", "Sin", "Cos", "Clear", "->", "\b", "\r", "c", "."}
+    };    
+                      
     public static boolean find(String [][] set, String toFind){
-        
-        for(String operation: set){
-            if(toFind == operation)
-                return true;
-            }
-        //if no match, return false
+        for(String[] operation: set)
+            for(String op: operation){
+                if(toFind.equals(op))
+                    return true;
+                }
         return false;
     }                                    
                                        
@@ -105,11 +103,10 @@ public class JavaFX_Calculator_FinalProject extends Application {
         GridPane numberPad = new GridPane();
         numberPad.setHgap(5);
         numberPad.setVgap(5);
-        Button num;
-        int i = 1;
+        Button num;        
         
         //add numbers to pad and generate event handlers
-        for(int r = 2; r >= 0; r--)
+        for(int r = 2, i = 1; r >= 0; r--)
             for(int c = 0; c <= 2; c++){
                String temp = numSym[0][i];
                i++;
@@ -117,19 +114,9 @@ public class JavaFX_Calculator_FinalProject extends Application {
                num.setOnMouseClicked(e->getInput().setText(getInput().getText() + temp));
                num.setOnKeyTyped(new keyPressed());
                 
-               numberPad.add(num, c, r);    
-               /*
-                char temp = Integer.toString(i).charAt(0);                
-                
-                num = new Button(Integer.toString(i));
-                num.setOnMouseClicked(e->getInput().setText(getInput().getText()+ temp));
-                num.setOnKeyTyped(new keyPressed());
-                
-                numberPad.add(num,c,r);                
-               */
+               numberPad.add(num, c, r);
             }        
         
-        //we may not need to use numSym to make these buttons
         Button zero = new Button(numSym[0][0]);
         zero.setOnMouseClicked(e -> getInput().setText(getInput().getText() + numSym[0][0]));
         zero.setOnKeyTyped(new keyPressed());
@@ -213,7 +200,7 @@ public class JavaFX_Calculator_FinalProject extends Application {
         clearAll.setMaxSize(Double.MAX_VALUE,Double.MAX_VALUE);
        
         Button clearLast = new Button("->");
-        clearLast.setOnMouseClicked(e-> getInput().setText(input.getText().substring(0,input.getText().length()-1)));
+        clearLast.setOnMouseClicked(e -> getInput().setText(input.getText().substring(0,input.getText().length()-1)));
         clearLast.setOnKeyTyped(new keyPressed());
         clearLast.setMaxSize(Double.MAX_VALUE,Double.MAX_VALUE);
         
@@ -228,249 +215,103 @@ public class JavaFX_Calculator_FinalProject extends Application {
         return equations;
     }
     
-    public static void add(){
+    public static void getOperationForInput(String calcInput){
+        operands.add(calcInput);
         if(!inputNum.isEmpty() && operands.isEmpty()){
-            operands.add("+");
-            if(displayText.getText() == ""){
-                displayText.setText(input.getText()+" + ");
+            if("".equals(displayText.getText())){
+                displayText.setText(input.getText() + calcInput);
             }
             else{
-                displayText.setText(displayText.getText()+ input.getText()+" + ");
+                displayText.setText(displayText.getText() + input.getText() + calcInput);
             }
-            setInput("");
         }
         else{
             inputNum.add(input.getText());
-            operands.add("+");
                 
-            if(displayText.getText() == ""){
-                displayText.setText(input.getText()+" + ");
+            if("".equals(displayText.getText())){
+                displayText.setText(input.getText() + calcInput);
             }
             else{
-                displayText.setText(displayText.getText()+ input.getText()+" + ");
-            }
-            setInput("");        
+                displayText.setText(displayText.getText() + input.getText() + calcInput);
+            }        
         }
+        setInput("");
         clicked = false;
     }
     
-    public static void subtract(){
-        if(!inputNum.isEmpty()&& operands.isEmpty()){
-            operands.add("-");
-            
-            if(displayText.getText() == ""){
-                displayText.setText(input.getText()+" - ");
-            }
-            else{
-                displayText.setText(displayText.getText()+ input.getText()+" - ");
-            }
-            setInput("");
-        }
-        else{
-            inputNum.add(input.getText());
-            operands.add("-");
-            
-            if(displayText.getText() ==""){
-                    displayText.setText(input.getText()+" - ");
-            }
-            else{
-                  displayText.setText(displayText.getText()+ input.getText()+" - ");
-                    }
-            setInput("");
-    
-        }
-        clicked = false;
-    }
-    
-    public static void multiply(){
-        if(!inputNum.isEmpty()&& operands.isEmpty()){
-            operands.add("*");
-                
-            if(displayText.getText() ==""){
-                    displayText.setText(input.getText()+" * ");
-            }
-            else{
-                  displayText.setText(displayText.getText()+ input.getText()+" * ");
-                    }
-            setInput("");
-        }
-        else{
-            inputNum.add(input.getText());
-            operands.add("*");
-                
-            if(displayText.getText() ==""){
-                    displayText.setText(input.getText()+" * ");
-            }
-            else{
-                  displayText.setText(displayText.getText()+ input.getText()+" * ");
-                    }
-            setInput("");
-        }
-        clicked = false;
-    }
-    
-    public static void divide(){
-        if(!inputNum.isEmpty() && operands.isEmpty()){
-            operands.add("/");
-        
-            if(displayText.getText() ==""){
-                displayText.setText(input.getText()+" / ");
-            }
-            else{
-                  displayText.setText(displayText.getText()+ input.getText()+" / ");
-            }
-        setInput("");
-        }
-        else{
-            inputNum.add(input.getText());
-            operands.add("/");
-        
-            if(displayText.getText() ==""){
-                displayText.setText(input.getText()+" / ");
-            }
-            else{
-                  displayText.setText(displayText.getText()+ input.getText()+" / ");
-            }
-        setInput("");
-        }
-        clicked = false;
-    }
-    
-    public static void powerOf(){
-        if(!inputNum.isEmpty() && operands.isEmpty()){
-            operands.add("^");
-        
-            if(displayText.getText() ==""){
-                displayText.setText(input.getText()+" ^ ");
-            }
-            else{
-                displayText.setText(displayText.getText()+ input.getText()+" ^ ");
-            }
-        setInput("");
-        }
-        else{
-            inputNum.add(input.getText());
-            operands.add("^");
-        
-            if(displayText.getText() ==""){
-                displayText.setText(input.getText()+" ^ ");
-            }
-            else{
-                  displayText.setText(displayText.getText()+ input.getText()+" ^ ");
-                    }
-        setInput("");
-        }
-        clicked = false;    
-    }
-    
+    //temp removed to clear old equations
     public static void clearAll(){
-        String temp = input.getText();
-       
         inputNum.clear();
         operands.clear();
-        
-        input.setText("");
-        displayText.setText(temp);                
+        input.setText("");               
         }
    
+    //tested and performs reasonably well. may have some isues to work out
+    //multple operand equations do not work : calc reports 9 - 6 + 4 == -1 (should be 7)
+    //or add some functionality
     static class keyPressed implements EventHandler<KeyEvent>{
         @Override
         public void handle(KeyEvent kb){
-           /*try this instead, I will test it at home. 
-             you can replace the whole if/else with this single line of code
-             if( numSym.find( kb.getCharacter() ) ) // i will write find and test it
-                setInput.getInput().getText() + kb.getCharacter();
-             else (ignore entry, do nothing)
-             if you want to do a numeric or symbolic validation, that can be a different method
-             i'm going to make an array of valid characters. we will look for those.
-             Anything else not on that list can be ignored.
-           */
-           if (kb.getCharacter().equals("0"))
-               setInput(getInput().getText() + "0");
-           else if(kb.getCharacter().equals("1"))
-               setInput(getInput().getText() + "1");
-           else if(kb.getCharacter().equals("2"))
-               setInput(getInput().getText() + "2");
-           else if(kb.getCharacter().equals("3"))
-               setInput(getInput().getText() + "3");
-           else if(kb.getCharacter().equals("4"))
-               setInput(getInput().getText() + "4");
-           else if(kb.getCharacter().equals("5"))
-               setInput(getInput().getText() + "5");
-           else if(kb.getCharacter().equals("6"))
-               setInput(getInput().getText() + "6");
-           else if(kb.getCharacter().equals("7"))
-               setInput(getInput().getText() + "7");
-           else if(kb.getCharacter().equals("8"))
-               setInput(getInput().getText() + "8");
-           else if(kb.getCharacter().equals("9"))
-              setInput(getInput().getText() +"9");
-           else if(kb.getCharacter().equals("c"))
-               clearAll();
-           else if(kb.getCharacter().equals("\b"))
-               setInput(input.getText().substring(0,input.getText().length()-1));
-           else if(kb.getCharacter().equals("+")){
-               add();
-           }
-           else if(kb.getCharacter().equals("-")){
-               subtract();
-           }
-           else if(kb.getCharacter().equals("*")){
-               multiply();
-           }
-            else if(kb.getCharacter().equals("/")){
-                divide();
-            }
-            else if(kb.getCharacter().equals("\r")){
-                inputNum.add(input.getText());
-                MathOperations.compute(inputNum,operands);
+            String kbEntry = kb.getCharacter();
             
-            }
-            else if(kb.getCharacter().equals("."))
-                 if(clicked == false){
-                    getInput().setText(getInput().getText()+".");
-                    clicked=true;
-            }    
-        }
-    }
-     
-
-    static class dotClicked implements EventHandler<MouseEvent>{
-        
-        @Override
-        public void handle(MouseEvent e){
-                if(clicked == false){
-                    getInput().setText(getInput().getText()+".");
-                    clicked=true;
+            //if a key entry is found, switch case runs
+            if(find(numSym, kbEntry))
+                switch (kb.getCharacter()) {
+                    case "c":
+                        clearAll();
+                        break;
+                    case "\b":
+                        setInput(input.getText().substring(0, input.getText().length() - 1));
+                        break;
+                    case "+":
+                    case "-":
+                    case "*":
+                    case "/":
+                        getOperationForInput(kbEntry);
+                        break;
+                    case "\r":
+                        inputNum.add(input.getText());
+                        MathOperations.compute(inputNum, operands);
+                        break;
+                    case ".":
+                        if(clicked == false){
+                            getInput().setText(getInput().getText()+ ".");
+                            clicked=true;
+                        }
+                        break;
+                    //adds number after no other 
+                    default:
+                        setInput(getInput().getText() + kbEntry);
+                        break;
                 }
         }
     }
-
     
+    static class dotClicked implements EventHandler<MouseEvent>{
+        @Override
+        public void handle(MouseEvent e){
+            if(clicked == false){
+                getInput().setText(getInput().getText()+".");
+                clicked=true;
+            }
+        }
+    }
+    
+    //does not work, performs unpredictably. unfinished
     static class operationClicked implements EventHandler<MouseEvent>{
    
         @Override
         public void handle(MouseEvent e){
             
-            String temp=e.getSource().toString();
-            System.out.println(temp);
-             if(temp.contains("' +'"))
-                 add();
-                
-             else if (temp.contains("' / '"))
-                 divide();
-        
-             else if(temp.contains("' - '"))
-                 subtract();
-             
-             else if(temp.contains("' * '"))
-                 multiply();
-             
-             else if(temp.contains("'x^y'"))
-                 powerOf();
-                     
-             
+            String temp = e.getSource().toString();
+            //System.out.println(temp);
+            if(find(numSym, temp)){
+                getOperationForInput(temp);
+                setInput(getInput().getText() + temp);
+            }
  /*********THESE NEED TO ALL BE MADE IN THE MATH OPERATIONS CLASS**************/
+             else if(temp.contains("'x^y'")){
+             }
              else if(temp.contains("'Log2'")){
              
              }
@@ -488,10 +329,9 @@ public class JavaFX_Calculator_FinalProject extends Application {
                  
              }
 /******************************************************************************/
-
         }
-        
+     
     
     }
     
-    }
+}
