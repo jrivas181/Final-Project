@@ -93,6 +93,7 @@ public class JavaFX_Calculator_FinalProject extends Application {
         display.setAlignment(Pos.TOP_CENTER);
         
         Scene scene = new Scene(display, 275, 150);
+        scene.setOnKeyTyped(new keyPressed());
         
         primaryStage.setTitle("Calculator");
         primaryStage.setScene(scene);
@@ -112,23 +113,19 @@ public class JavaFX_Calculator_FinalProject extends Application {
                i++;
                num = new Button(temp);
                num.setOnMouseClicked(e->getInput().setText(getInput().getText() + temp));
-               num.setOnKeyTyped(new keyPressed());
-                
+
                numberPad.add(num, c, r);
             }        
         
         Button zero = new Button(numSym[0][0]);
         zero.setOnMouseClicked(e -> getInput().setText(getInput().getText() + numSym[0][0]));
-        zero.setOnKeyTyped(new keyPressed());
         zero.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
         
         Button dot = new Button(numSym[1][0]);
         dot.setOnMouseClicked(new dotClicked());
-        dot.setOnKeyTyped(new keyPressed());
         dot.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
 
         Button equals = new Button(numSym[1][1]);
-        equals.setOnKeyTyped(new keyPressed());
         equals.setOnMouseClicked(e -> {
            inputNum.add(input.getText());
            MathOperations.compute(inputNum, operands);
@@ -137,19 +134,15 @@ public class JavaFX_Calculator_FinalProject extends Application {
         
         Button add = new Button(numSym[1][2]);
         add.setOnMouseClicked(new operationClicked());
-        add.setOnKeyTyped(new keyPressed());
         
         Button divide = new Button(numSym[1][3]);
         divide.setOnMouseClicked(new operationClicked());
-        divide.setOnKeyTyped(new keyPressed());
         
         Button subtract = new Button(numSym[1][4]);
         subtract.setOnMouseClicked(new operationClicked());
-        subtract.setOnKeyTyped(new keyPressed());
         
         Button multiply = new Button(numSym[1][5]);
-        multiply.setOnMouseClicked(new operationClicked());
-        multiply.setOnKeyTyped(new keyPressed());        
+        multiply.setOnMouseClicked(new operationClicked());        
         
         numberPad.addColumn(4, divide, multiply);
         numberPad.addColumn(5, subtract, add);
@@ -170,46 +163,38 @@ public class JavaFX_Calculator_FinalProject extends Application {
         equations.setVgap(5);
         
         Button sqrt = new Button("âˆšx");
-        sqrt.setOnKeyTyped(new keyPressed());
         sqrt.setOnMouseClicked(new operationClicked());
         sqrt.setMaxSize(Double.MAX_VALUE,Double.MAX_VALUE);
 
         Button log_2 = new Button("Log2");
-        log_2.setOnKeyTyped(new keyPressed());
         log_2.setOnMouseClicked(new operationClicked());
         log_2.setMaxSize(Double.MAX_VALUE,Double.MAX_VALUE);
         
         Button log_10 = new Button("Log10");
-        log_10.setOnKeyTyped(new keyPressed());
         log_10.setOnMouseClicked(new operationClicked());
         log_10.setMaxSize(Double.MAX_VALUE,Double.MAX_VALUE);
         
         Button x_y = new Button("x^y");
-        x_y.setOnKeyTyped(new keyPressed());
         x_y.setOnMouseClicked(new operationClicked());
         x_y.setMaxSize(Double.MAX_VALUE,Double.MAX_VALUE);
         
         Button sin = new Button("Sin");
-        sin.setOnKeyTyped(new keyPressed());
         sin.setOnMouseClicked(new operationClicked());
         sin.setMaxSize(Double.MAX_VALUE,Double.MAX_VALUE);
         
         Button clearAll = new Button("Clear");
-        clearAll.setOnMouseClicked(e-> getInput().setText(""));
-        clearAll.setOnKeyTyped(new keyPressed());
+        clearAll.setOnMouseClicked(e-> clearAll());
         clearAll.setMaxSize(Double.MAX_VALUE,Double.MAX_VALUE);
        
         Button clearLast = new Button("->");
         clearLast.setOnMouseClicked(e -> getInput().setText(input.getText().substring(0,input.getText().length()-1)));
-        clearLast.setOnKeyTyped(new keyPressed());
         clearLast.setMaxSize(Double.MAX_VALUE,Double.MAX_VALUE);
         
         Button cos = new Button("Cos");
-        cos.setOnMouseClicked(new operationClicked());
-        cos.setOnKeyTyped(new keyPressed());
+        //cos.setOnMouseClicked(new operationClicked());
         
-        equations.addColumn(0, log_2,log_10,sin,cos);
-        equations.addColumn(1,clearAll,clearLast,sqrt,x_y);
+        equations.addColumn(0, log_2, log_10, sin, cos);
+        equations.addColumn(1, clearAll, clearLast, sqrt,x_y);
         
         equations.setMinWidth(cos.getWidth());
         return equations;
@@ -245,7 +230,7 @@ public class JavaFX_Calculator_FinalProject extends Application {
         operands.clear();
         input.setText("");               
         }
-   
+    
     //tested and performs reasonably well. may have some isues to work out
     //multple operand equations do not work : calc reports 9 - 6 + 4 == -1 (should be 7)
     //or add some functionality
@@ -255,8 +240,13 @@ public class JavaFX_Calculator_FinalProject extends Application {
             String kbEntry = kb.getCharacter();
             
             //if a key entry is found, switch case runs
-            if(find(numSym, kbEntry))
-                switch (kb.getCharacter()) {
+            numSymHandler(kbEntry);                
+        }
+    }
+    
+    public static void numSymHandler(String toCheck){
+        if(find(numSym, toCheck))
+                switch (toCheck) {
                     case "c":
                         clearAll();
                         break;
@@ -267,7 +257,7 @@ public class JavaFX_Calculator_FinalProject extends Application {
                     case "-":
                     case "*":
                     case "/":
-                        getOperationForInput(kbEntry);
+                        getOperationForInput(toCheck);
                         break;
                     case "\r":
                         inputNum.add(input.getText());
@@ -279,19 +269,18 @@ public class JavaFX_Calculator_FinalProject extends Application {
                             clicked=true;
                         }
                         break;
-                    //adds number after no other 
+                    //adds number after no other key match
                     default:
-                        setInput(getInput().getText() + kbEntry);
+                        setInput(getInput().getText() + toCheck);
                         break;
                 }
-        }
     }
     
     static class dotClicked implements EventHandler<MouseEvent>{
         @Override
         public void handle(MouseEvent e){
             if(clicked == false){
-                getInput().setText(getInput().getText()+".");
+                getInput().setText(getInput().getText()+ ".");
                 clicked=true;
             }
         }
@@ -302,36 +291,32 @@ public class JavaFX_Calculator_FinalProject extends Application {
    
         @Override
         public void handle(MouseEvent e){
-            
             String temp = e.getSource().toString();
-            //System.out.println(temp);
-            if(find(numSym, temp)){
-                getOperationForInput(temp);
-                setInput(getInput().getText() + temp);
-            }
+            //temp generates a lot of garbage we cannot use. must substring
+            temp = temp.substring(temp.indexOf("'"));
+            temp = temp.replace("'", "");
+            System.out.println(temp);
+                 numSymHandler(temp);
  /*********THESE NEED TO ALL BE MADE IN THE MATH OPERATIONS CLASS**************/
-             else if(temp.contains("'x^y'")){
-             }
-             else if(temp.contains("'Log2'")){
-             
-             }
-             else if(temp.contains("'Log10'")){
-             
-             }
-             else if(temp.contains("'Sine'")){
-             
-             }
-             else if(temp.contains("'Cosine'")){
-                 
-             }
+                 if(temp.contains("'x^y'")){
 
-             else if(temp.contains("'âˆšx'")){
-                 
-             }
+                 }
+                 else if(temp.contains("'Log2'")){
+
+                 }
+                 else if(temp.contains("'Log10'")){
+
+                 }
+                 else if(temp.contains("'Sin'")){
+
+                 }
+                 else if(temp.contains("'Cos'")){
+
+                 }
+                 else if(temp.contains("'âˆšx'")){
+
+                 }
 /******************************************************************************/
         }
-     
-    
-    }
-    
+    }   
 }

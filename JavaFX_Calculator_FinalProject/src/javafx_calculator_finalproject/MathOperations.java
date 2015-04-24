@@ -11,6 +11,7 @@ public class MathOperations {
         checkOperands(inputNum, operands, "/");
         checkOperands(inputNum, operands, "+");
         checkOperands(inputNum, operands, "-");
+        result = 0;
     }   
     
     public static void checkOperands(ArrayList<String> inputNum, ArrayList<String> operands, String o){
@@ -104,7 +105,7 @@ public class MathOperations {
         double num1 = Double.valueOf(inputNum.get(i));
         double num2 = Double.valueOf(inputNum.get(i+1));   
 
-       result = num1-num2;
+        result = num1 - num2;
 
         if(Double.toString(result).endsWith(".0"))
             inputNum.set(i,Integer.toString((int) result));
