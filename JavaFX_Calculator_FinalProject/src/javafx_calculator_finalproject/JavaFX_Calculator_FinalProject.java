@@ -20,7 +20,7 @@ public class JavaFX_Calculator_FinalProject extends Application {
     private static Text displayText = new Text();
     private static ArrayList<String> inputNum = new ArrayList<String>();
     private static ArrayList<String> operands = new ArrayList<String>();
-    private static Boolean clicked = false;
+    private static Boolean clicked = false, funcClicked= false;
     
     /*2d array set of valid characters / functions
       we can use these to build the buttons ... for/each, getOperationForInput string
@@ -191,6 +191,7 @@ public class JavaFX_Calculator_FinalProject extends Application {
         clearLast.setMaxSize(Double.MAX_VALUE,Double.MAX_VALUE);
         
         Button cos = new Button("Cos");
+        cos.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
         //cos.setOnMouseClicked(new operationClicked());
         
         equations.addColumn(0, log_2, log_10, sin, cos);
@@ -201,34 +202,85 @@ public class JavaFX_Calculator_FinalProject extends Application {
     }
     
     public static void getOperationForInput(String calcInput){
-        operands.add(calcInput);
+        
         if(!inputNum.isEmpty() && operands.isEmpty()){
-            if("".equals(displayText.getText())){
-                displayText.setText(input.getText() + calcInput);
+            if(calcInput.equals("x^y")){
+                if("".equals(displayText.getText())){
+                    displayText.setText(input.getText() + "^");
             }
+                else{
+                    displayText.setText(displayText.getText() + input.getText() + "^");
+            }
+        }
             else{
-                displayText.setText(displayText.getText() + input.getText() + calcInput);
+                if("".equals(displayText.getText())){
+                    displayText.setText(input.getText() + calcInput);
             }
+                else{
+                    displayText.setText(displayText.getText() + input.getText() + calcInput);
+            }}
         }
         else{
+            if(!funcClicked)
             inputNum.add(input.getText());
-                
-            if("".equals(displayText.getText())){
-                displayText.setText(input.getText() + calcInput);
+           
+            if(calcInput.equals("x^y")){    
+                if("".equals(displayText.getText())){
+                    displayText.setText(input.getText() + "^");
             }
-            else{
-                displayText.setText(displayText.getText() + input.getText() + calcInput);
+                else{
+                    displayText.setText(displayText.getText() + input.getText() + "^");
             }        
         }
+            else{
+                if("".equals(displayText.getText())){
+                    displayText.setText(input.getText() + calcInput);
+             }
+                else{
+                    displayText.setText(displayText.getText() + input.getText() + calcInput);
+            }   
+            }
+        }
+        operands.add(calcInput);
         setInput("");
         clicked = false;
+        funcClicked=false;
+    }
+    
+    public static void getFunctionsForInput(String calcInput){
+            inputNum.add(input.getText());
+            
+            if(calcInput.equals("x^y")){
+            if("".equals(displayText.getText())){
+                displayText.setText(calcInput +"^" + input.getText() );
+            }
+            else{
+                displayText.setText(displayText.getText() + calcInput +"^" + input.getText());
+            }
+            }
+            else{
+            if("".equals(displayText.getText())){
+                displayText.setText(calcInput +"(" + input.getText()+ ")" );
+            }
+            else{
+                displayText.setText(displayText.getText() + calcInput +"(" + input.getText()+ ")");
+            }
+            }
+
+        operands.add(calcInput);
+        setInput("");
+        clicked = false;
+
     }
     
     //temp removed to clear old equations
     public static void clearAll(){
         inputNum.clear();
         operands.clear();
-        input.setText("");               
+        input.setText("");
+        displayText.setText("");
+        clicked= false;
+        funcClicked = false;
         }
     
     //tested and performs reasonably well. may have some isues to work out
@@ -257,18 +309,33 @@ public class JavaFX_Calculator_FinalProject extends Application {
                     case "-":
                     case "*":
                     case "/":
+                    case "x^y": 
                         getOperationForInput(toCheck);
+                        funcClicked=false;
                         break;
+                    case "Log2":
+                    case "Log10":
+                    case "Sin":
+                    case "Cos":
+                    case "âˆšx":   
+                        getFunctionsForInput(toCheck);
+                        funcClicked = true;
+                        break;
+                    
                     case "\r":
+                        //fixes error where it would add an empty object when using functions
+                        if(!funcClicked)
                         inputNum.add(input.getText());
+                        System.out.println(inputNum);
                         MathOperations.compute(inputNum, operands);
+                        System.out.println(inputNum);
                         break;
                     case ".":
                         if(clicked == false){
                             getInput().setText(getInput().getText()+ ".");
                             clicked=true;
                         }
-                        break;
+                        break;    
                     //adds number after no other key match
                     default:
                         setInput(getInput().getText() + toCheck);
@@ -297,26 +364,7 @@ public class JavaFX_Calculator_FinalProject extends Application {
             temp = temp.replace("'", "");
             System.out.println(temp);
                  numSymHandler(temp);
- /*********THESE NEED TO ALL BE MADE IN THE MATH OPERATIONS CLASS**************/
-                 if(temp.contains("'x^y'")){
-
-                 }
-                 else if(temp.contains("'Log2'")){
-
-                 }
-                 else if(temp.contains("'Log10'")){
-
-                 }
-                 else if(temp.contains("'Sin'")){
-
-                 }
-                 else if(temp.contains("'Cos'")){
-
-                 }
-                 else if(temp.contains("'âˆšx'")){
-
-                 }
-/******************************************************************************/
+ 
         }
     }   
 }
